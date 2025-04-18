@@ -157,113 +157,122 @@ const AudioFetchPage = () => {
         </h1>
       </div>
 
-      {/* Main content area - Two columns */}
-      <div className="flex flex-grow p-6 md:pt-6 md:px-10 gap-8 m-4 mt-0">
-        {/* Left Column */}
-        <div className="w-1/3 flex flex-col gap-8">
-          <div className="h-80 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg flex items-center justify-center p-4">
-            <FileUpload onChange={handleFileUpload} />
+      {/* Main content area - Wrap columns and tabs */}
+      <div className="flex flex-col flex-grow p-6 md:pt-6 md:px-10 gap-8 m-4 mt-0">
+
+        {/* Top Section: Two columns */}
+        <div className="flex gap-8">
+          {/* Left Column - Upload and File List */}
+          <div className="w-1/4 flex flex-col gap-8">
+            {/* File Upload Area */}
+            <div className="h-80 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg flex items-center justify-center p-4">
+              <FileUpload onChange={handleFileUpload} />
+            </div>
+
+            {/* Display uploaded file names */}
+            {files.length > 0 && (
+              <div className="mt-4 flex-grow overflow-y-auto bg-neutral-800 rounded-lg p-4 border border-neutral-700">
+                <h2 className="text-lg font-semibold mb-2">Selected files:</h2>
+                <ul className="list-disc list-inside text-neutral-300 space-y-1">
+                  {files.map((file, index) => (
+                    <li key={index}
+                        className={`cursor-pointer truncate ${file.type.startsWith('audio/') ? 'hover:text-blue-400' : 'text-neutral-500 cursor-not-allowed'}`}
+                        onClick={() => handleSelectFile(file)}
+                        title={file.name}
+                    >
+                      {file.name} {file.type.startsWith('audio/') ? '(Click to play)' : ''}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
-          <div className="p-4 border border-neutral-700 rounded-lg bg-neutral-850">
-            <h2 className="text-xl font-semibold mb-4">Record Audio</h2>
-            <div className="flex flex-col items-center gap-4">
-              {!isRecording ? (
-                <button
-                  onClick={startRecording}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white font-medium flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 1A5 5 0 1 1 8 3a5 5 0 0 1 0 10z"/>
-                    <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                  </svg>
-                  Start Recording
-                </button>
-              ) : (
-                <button
-                  onClick={stopRecording}
-                  className="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded-md text-white font-medium flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/>
-                  </svg>
-                  Stop Recording
-                </button>
-              )}
-            </div>
-          </div>
-
-          {files.length > 0 && (
-            <div className="mt-4 flex-grow overflow-y-auto">
-              <h2 className="text-lg font-semibold">Selected files:</h2>
-              <ul className="list-disc list-inside text-neutral-300 space-y-1">
-                {files.map((file, index) => (
-                  <li key={index}
-                      className={`cursor-pointer truncate ${file.type.startsWith('audio/') ? 'hover:text-blue-400' : 'text-neutral-500 cursor-not-allowed'}`}
-                      onClick={() => handleSelectFile(file)}
-                      title={file.name}
-                  >
-                    {file.name} {file.type.startsWith('audio/') ? '(Click to play)' : ''}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column */}
-        <div className="w-2/3 flex flex-col gap-8 bg-neutral-800 rounded-lg p-6">
-          {currentAudioSource ? (
+          {/* Right Column - Record and Playback */}
+          <div className="w-3/4 flex flex-col gap-8 bg-neutral-800 rounded-lg p-6 border border-neutral-700">
+            {/* Audio Recording Area - Moved Here */}
             <div className="p-4 border border-neutral-700 rounded-lg bg-neutral-850">
-              <h2 className="text-xl font-semibold mb-4">Playback</h2>
-              <WaveformPlayer audioSource={currentAudioSource} />
+              <h2 className="text-xl font-semibold mb-4">Record Audio</h2>
+              <div className="flex flex-col items-center gap-4">
+                {!isRecording ? (
+                  <button
+                    onClick={startRecording}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white font-medium flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 1A5 5 0 1 1 8 3a5 5 0 0 1 0 10z"/>
+                      <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                    </svg>
+                    Start Recording
+                  </button>
+                ) : (
+                  <button
+                    onClick={stopRecording}
+                    className="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 rounded-md text-white font-medium flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/>
+                    </svg>
+                    Stop Recording
+                  </button>
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="p-4 border border-neutral-700 rounded-lg bg-neutral-850 flex items-center justify-center min-h-[200px]">
-              <p className="text-neutral-500">Upload or record audio to see player</p>
-            </div>
-          )}
 
-          <div className="flex-grow border border-neutral-700 rounded-lg bg-neutral-850 p-4 flex flex-col">
-            <h2 className="text-xl font-semibold mb-4">Analysis Results</h2>
-            <div className="flex border-b border-neutral-600 mb-4 overflow-x-auto">
-              {analysisTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 transition-colors duration-150 whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'text-blue-400 border-b-2 border-blue-400'
-                      : 'text-neutral-400 hover:text-neutral-200'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <div className="flex-grow relative overflow-hidden">
-              {analysisTabs.map((tab) => (
-                <div
-                  key={tab.id}
-                  className={`absolute inset-0 p-4 transition-opacity duration-300 ease-in-out rounded-lg border border-white/20 bg-white/10 backdrop-blur-md ${
-                    activeTab === tab.id
-                      ? 'opacity-100 z-10 pointer-events-auto'
-                      : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                  style={{
-                    '@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    },
-                  }}
-                >
-                  <div className="h-full overflow-y-auto">
-                    {tab.content}
-                  </div>
+            {/* Waveform Player Area */}
+            {currentAudioSource ? (
+              <div className="flex-grow p-4 border border-neutral-700 rounded-lg bg-neutral-850 flex flex-col">
+                <h2 className="text-xl font-semibold mb-4 flex-shrink-0">Playback</h2>
+                <div className="flex-grow min-h-0">
+                   <WaveformPlayer audioSource={currentAudioSource} />
                 </div>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="flex-grow p-4 border border-neutral-700 rounded-lg bg-neutral-850 flex flex-col items-center justify-center min-h-[150px]">
+                <p className="text-neutral-500">Upload or record audio to see player</p>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Bottom Section: Full-width Tabs */}
+        <div className="flex-grow border border-neutral-700 rounded-lg bg-neutral-850 p-4 flex flex-col min-h-[300px]">
+          <h2 className="text-xl font-semibold mb-4">Analysis Results</h2>
+          {/* Tab Navigation */}
+          <div className="flex border-b border-neutral-600 mb-4 overflow-x-auto">
+            {analysisTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-2 transition-colors duration-150 whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'text-blue-400 border-b-2 border-blue-400'
+                    : 'text-neutral-400 hover:text-neutral-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          {/* Tab Content Area */}
+          <div className="flex-grow relative overflow-hidden">
+            {analysisTabs.map((tab) => (
+              <div
+                key={tab.id}
+                className={`absolute inset-0 p-4 transition-opacity duration-300 ease-in-out rounded-lg border border-white/20 bg-white/10 backdrop-blur-md ${
+                  activeTab === tab.id
+                    ? 'opacity-100 z-10 pointer-events-auto'
+                    : 'opacity-0 z-0 pointer-events-none'
+                }`}
+              >
+                <div className="h-full overflow-y-auto">
+                  {tab.content}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );
