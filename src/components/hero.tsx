@@ -33,16 +33,22 @@ export const Hero = () => {
       <BackgroundBeamsWithCollision className="absolute inset-0 z-0" />
 
       <div className="relative z-10 flex w-full flex-col items-center text-center pt-12 h-full">
-        <h1
-          className="mb-6 text-5xl font-bold tracking-tight text-white md:text-6xl"
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.2 }}
         >
-          Sonic-Seeker
-        </h1>
-        <p
-          className="mb-4 max-w-2xl text-lg text-neutral-300"
-        >
-          Your all in one audio tool
-        </p>
+          <h1
+            className="mb-6 text-5xl font-bold tracking-tight text-white md:text-6xl"
+          >
+            Sonic-Seeker
+          </h1>
+          <p
+            className="mb-4 max-w-2xl text-lg text-neutral-300"
+          >
+            Your all in one audio tool
+          </p>
+        </motion.div>
         
         {/* Container for Spline and Cards */}
         <div className="w-full flex-1 flex items-center justify-center mx-auto" style={{ height: "calc(100vh - 250px)" }}>
