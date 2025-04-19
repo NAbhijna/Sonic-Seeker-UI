@@ -1,25 +1,22 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
-// Restore motion imports for scroll effects
 import {
   motion,
   AnimatePresence,
-  useScroll, // Restored
-  useMotionValueEvent, // Restored
 } from "framer-motion";
-
-import React, { useRef, useState } from "react"; // Added useRef back
+import React, { useState } from "react";
 
 interface NavbarProps {
   children: React.ReactNode;
   className?: string;
+  visible?: boolean;
 }
 
 interface NavBodyProps {
   children: React.ReactNode;
   className?: string;
-  visible?: boolean; // Restored
+  visible?: boolean;
 }
 
 interface NavItemsProps {
@@ -34,7 +31,7 @@ interface NavItemsProps {
 interface MobileNavProps {
   children: React.ReactNode;
   className?: string;
-  visible?: boolean; // Restored
+  visible?: boolean;
 }
 
 interface MobileNavHeaderProps {
@@ -49,30 +46,14 @@ interface MobileNavMenuProps {
   onClose: () => void;
 }
 
-// Restore motion.div, scroll hooks, visible state logic
-export const Navbar = ({ children, className }: NavbarProps) => {
-  const ref = useRef<HTMLDivElement>(null); // Restored
-  const { scrollY } = useScroll({ // Restored
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const [visible, setVisible] = useState<boolean>(false); // Restored
+interface MobileNavToggleProps {
+  isOpen: boolean;
+  onClick: () => void;
+}
 
-  useMotionValueEvent(scrollY, "change", (latest) => { // Restored
-    if (latest > 100) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  });
-
+export const Navbar = ({ children, className, visible }: NavbarProps) => {
   return (
-    // Restore motion.div and ref
-    <motion.div
-      ref={ref}
-      className={cn("sticky inset-x-0 top-0 z-40 w-full", className)}
-    >
-      {/* Restore cloning logic for visible state */}
+    <div className={cn("sticky inset-x-0 top-0 z-40 w-full", className)}>
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(
@@ -81,36 +62,33 @@ export const Navbar = ({ children, className }: NavbarProps) => {
             )
           : child,
       )}
-    </motion.div>
+    </div>
   );
 };
 
-// Restore motion.div, animation props, and visible prop/styles
 export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
-    // Restore motion.div
     <motion.div
-      // Restore animation props
       animate={{
+        backgroundColor: visible ? "rgba(10, 10, 10, 0.8)" : "transparent",
         backdropFilter: visible ? "blur(10px)" : "none",
+        width: visible ? "40%" : "100%",
+        y: visible ? 20 : 0,
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
-        width: visible ? "40%" : "100%",
-        y: visible ? 20 : 0,
       }}
       transition={{
         type: "spring",
         stiffness: 200,
-        damping: 50,
+        damping: 30,
       }}
       style={{
-        minWidth: "800px",
+        minWidth: visible ? "800px" : "auto",
       }}
-      // Restore conditional background based on visible state
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent",
-        visible && "bg-white/80 dark:bg-neutral-950/80", // Restored conditional background
+        "relative z-[60] mx-auto hidden flex-row items-center justify-between self-start px-4 py-2 lg:flex",
+        visible ? "rounded-full" : "rounded-none",
         className,
       )}
     >
@@ -151,32 +129,26 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
   );
 };
 
-// Restore motion.div, animation props, and visible prop/styles
 export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
   return (
-    // Restore motion.div
     <motion.div
-      // Restore animation props
       animate={{
+        backgroundColor: visible ? "rgba(10, 10, 10, 0.8)" : "transparent",
         backdropFilter: visible ? "blur(10px)" : "none",
+        width: visible ? "90%" : "100%",
+        y: visible ? 20 : 0,
+        borderRadius: visible ? "0.5rem" : "0rem",
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
-        width: visible ? "90%" : "100%",
-        paddingRight: visible ? "12px" : "0px",
-        paddingLeft: visible ? "12px" : "0px",
-        borderRadius: visible ? "4px" : "2rem",
-        y: visible ? 20 : 0,
       }}
       transition={{
         type: "spring",
         stiffness: 200,
-        damping: 50,
+        damping: 30,
       }}
-      // Restore conditional background based on visible state
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
-        visible && "bg-white/80 dark:bg-neutral-950/80", // Restored conditional background
+        "relative z-50 mx-auto flex flex-col items-center justify-between px-3 py-2 lg:hidden",
         className,
       )}
     >
@@ -211,11 +183,13 @@ export const MobileNavMenu = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950",
+            "w-full flex flex-col items-start justify-start gap-4 px-4 py-8 overflow-hidden",
+            "bg-white dark:bg-neutral-950 shadow-[0_8px_16px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_16px_rgba(0,0,0,0.3)]",
             className,
           )}
         >
@@ -229,10 +203,7 @@ export const MobileNavMenu = ({
 export const MobileNavToggle = ({
   isOpen,
   onClick,
-}: {
-  isOpen: boolean;
-  onClick: () => void;
-}) => {
+}: MobileNavToggleProps) => {
   return isOpen ? (
     <IconX className="text-black dark:text-white" onClick={onClick} />
   ) : (
@@ -243,7 +214,7 @@ export const MobileNavToggle = ({
 export const NavbarLogo = () => {
   return (
     <a
-      href="#"
+      href="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
       <span className="font-medium text-black dark:text-white">Sonic Seeker</span>
@@ -263,7 +234,7 @@ export const NavbarButton = ({
   as?: React.ElementType;
   children: React.ReactNode;
   className?: string;
-  variant?: "primary" | "secondary" | "dark" | "gradient" | "outline"; // Keep outline definition
+  variant?: "primary" | "secondary" | "dark" | "gradient" | "outline";
 } & (
   | React.ComponentPropsWithoutRef<"a">
   | React.ComponentPropsWithoutRef<"button">
@@ -278,7 +249,7 @@ export const NavbarButton = ({
     dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
     gradient:
       "bg-gradient-to-b from-blue-500 to-blue-700 text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]",
-    outline: "bg-transparent border border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white focus:ring-neutral-700 shadow-none", 
+    outline: "bg-transparent border border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white focus:ring-neutral-700 shadow-none",
   };
 
   const effectiveVariant = variantStyles[variant] ? variant : 'primary';

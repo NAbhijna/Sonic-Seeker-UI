@@ -1,22 +1,13 @@
 "use client";
 
 import { Hero } from "@/components/hero";
-import { Navbar, NavBody, NavItems, NavbarLogo, NavbarButton, MobileNav, MobileNavHeader, MobileNavToggle, MobileNavMenu } from "../components/ui/navbar";
-import React, { useState } from "react";
+import React from "react";
 import { Timeline, TimelineEntry } from "../components/ui/timeline";
-import dynamic from 'next/dynamic'; // Import dynamic
+import dynamic from 'next/dynamic';
 
-// Dynamically import Typewriter with SSR disabled
 const Typewriter = dynamic(() => import('react-typewriter-effect'), { ssr: false });
 
 export default function Home() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { name: "Features", link: "#features" },
-    { name: "About Us", link: "#about" },
-  ];
-
   const featureTimeline: TimelineEntry[] = [
     {
       title: "Transcription",
@@ -93,42 +84,15 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen relative text-white border-none bg-black">
-      <Navbar className="fixed top-0 w-full z-50 bg-transparent">
-        <NavBody className="bg-neutral-950 bg-opacity-80 backdrop-blur-sm">
-          <NavbarLogo />
-          <NavItems items={navItems} />
-          <NavbarButton href="/login" className="ml-auto">
-            Login
-          </NavbarButton>
-        </NavBody>
-
-        <MobileNav>
-          <MobileNavHeader className="bg-neutral-950 border-b border-neutral-800">
-            <NavbarLogo />
-            <MobileNavToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-          </MobileNavHeader>
-          <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)} className="bg-neutral-950">
-            {navItems.map((item) => (
-              <a key={item.link} href={item.link} className="block py-2 text-white">
-                {item.name}
-              </a>
-            ))}
-            <NavbarButton href="/login" variant="primary" className="w-full mt-4">
-              Login
-            </NavbarButton>
-          </MobileNavMenu>
-        </MobileNav>
-      </Navbar>
-
+    <>
       <Hero />
 
-      <section id="features" className="min-h-screen p-10 md:px-20 lg:px-32 pt-20">
+      <section id="features" className="min-h-screen p-10 md:px-20 lg:px-32 bg-neutral-900 pt-20">
         <h2 className="text-3xl font-bold text-center text-white mb-12">
           <Typewriter
             text="Features"
             cursorColor="#FFFFFF"
-            textStyle={{ color: '#FFFFFF', textAlign: 'center' }} // Ensure text is centered
+            textStyle={{ color: '#FFFFFF', textAlign: 'center' }}
             typeSpeed={100}
             startDelay={100}
           />
@@ -137,12 +101,12 @@ export default function Home() {
           <Timeline data={featureTimeline} />
         </div>
       </section>
-      <section id="about" className="min-h-screen p-10 flex flex-col items-center justify-center">
+      <section id="about" className="min-h-screen p-10 bg-neutral-800 flex flex-col items-center justify-center">
         <h2 className="text-3xl font-bold text-center text-white mb-12">
           <Typewriter
             text="About Us"
             cursorColor="#FFFFFF"
-            textStyle={{ color: '#FFFFFF', textAlign: 'center' }} // Ensure text is centered
+            textStyle={{ color: '#FFFFFF', textAlign: 'center' }}
             typeSpeed={100}
             startDelay={100}
           />
@@ -156,6 +120,6 @@ export default function Home() {
           </p>
         </div>
       </section>
-    </main>
+    </>
   );
 }

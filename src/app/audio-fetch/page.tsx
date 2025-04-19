@@ -1,37 +1,25 @@
-"use client"; // Add use client directive
-import React, { useState, useRef, useEffect } from 'react'; // Import useState, useRef, useEffect
-// Removed ProfileSidebar import
-// Import Navbar components
-import { Navbar, NavBody, NavItems, NavbarLogo, NavbarButton, MobileNav, MobileNavHeader, MobileNavToggle, MobileNavMenu } from "@/components/ui/navbar";
-// Import FileUpload component
+"use client";
+import React, { useState, useRef, useEffect } from 'react';
 import { FileUpload } from "@/components/ui/file-upload";
-import WaveformPlayer from '@/components/ui/waveform-player'; // Import the new component
-import dynamic from 'next/dynamic'; // Import dynamic
-// Remove import for custom Tabs component
-// import { Tabs } from "@/components/ui/tabs";
+import WaveformPlayer from '@/components/ui/waveform-player';
+import dynamic from 'next/dynamic';
 
-// Dynamically import Typewriter with SSR disabled
 const Typewriter = dynamic(() => import('react-typewriter-effect'), { ssr: false });
 
-// Define Tab structure (Reverted)
 interface Tab {
   id: string;
   label: string;
-  content: React.ReactNode; // Content for the tab
+  content: React.ReactNode;
 }
 
 const AudioFetchPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const [currentAudioSource, setCurrentAudioSource] = useState<string | File | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('transcription');
 
-  // Re-introduce state for active tab
-  const [activeTab, setActiveTab] = useState<string>('transcription'); // Default to 'transcription'
-
-  // Define Tabs Data (Reverted structure)
   const analysisTabs: Tab[] = [
     { id: 'transcription', label: 'Transcription', content: <p className="text-neutral-100">Transcription results will appear here.</p> },
     { id: 'diarization', label: 'Speech Diarization', content: <p className="text-neutral-100">Speech diarization results will appear here.</p> },
@@ -44,14 +32,9 @@ const AudioFetchPage = () => {
     { id: 'timestamps', label: 'Timestamps', content: <p className="text-neutral-100">Timestamp information will appear here.</p> },
   ];
 
-  const navItems = [
-    { name: "Features", link: "/#features" },
-    { name: "About Us", link: "/#about" },
-  ];
-
   const handleFileUpload = (uploadedFiles: File[]) => {
     setFiles(uploadedFiles);
-    console.log("Uploaded files:", uploadedFiles); // Log files to console
+    console.log("Uploaded files:", uploadedFiles);
     const firstAudio = uploadedFiles.find(file => file.type.startsWith('audio/'));
     if (firstAudio) {
       setCurrentAudioSource(firstAudio);
@@ -62,7 +45,7 @@ const AudioFetchPage = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
-      audioChunksRef.current = []; // Reset chunks
+      audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -111,40 +94,7 @@ const AudioFetchPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-900 text-white">
-      {/* Navbar at the top */}
-      <Navbar className="sticky top-0 w-full z-50 bg-transparent">
-        <NavBody className="bg-neutral-950 bg-opacity-80 backdrop-blur-sm">
-          <NavbarLogo />
-          <NavItems items={navItems} />
-          <NavbarButton
-            href="/profile"
-            className="ml-auto"
-            variant="secondary"
-          >
-            Profile
-          </NavbarButton>
-        </NavBody>
-
-        <MobileNav>
-          <MobileNavHeader className="bg-neutral-950 border-b border-neutral-800">
-            <NavbarLogo />
-            <MobileNavToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-          </MobileNavHeader>
-          <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)} className="bg-neutral-950">
-            {navItems.map((item) => (
-              <a key={item.link} href={item.link} className="block py-2 text-white">
-                {item.name}
-              </a>
-            ))}
-            <NavbarButton href="/profile" variant="secondary" className="w-full mt-4">
-              Profile
-            </NavbarButton>
-          </MobileNavMenu>
-        </MobileNav>
-      </Navbar>
-
-      {/* Moved Title Above Columns */}
+    <>
       <div className="p-6 md:pt-10 md:pb-0 md:px-10 m-4 mb-0">
         <h1 className="text-3xl font-bold">
           <Typewriter
@@ -157,19 +107,13 @@ const AudioFetchPage = () => {
         </h1>
       </div>
 
-      {/* Main content area - Wrap columns and tabs */}
       <div className="flex flex-col flex-grow p-6 md:pt-6 md:px-10 gap-8 m-4 mt-0">
-
-        {/* Top Section: Two columns */}
         <div className="flex gap-8">
-          {/* Left Column - Upload and File List */}
           <div className="w-1/4 flex flex-col gap-8">
-            {/* File Upload Area */}
             <div className="h-80 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg flex items-center justify-center p-4">
               <FileUpload onChange={handleFileUpload} />
             </div>
 
-            {/* Display uploaded file names */}
             {files.length > 0 && (
               <div className="mt-4 flex-grow overflow-y-auto bg-neutral-800 rounded-lg p-4 border border-neutral-700">
                 <h2 className="text-lg font-semibold mb-2">Selected files:</h2>
@@ -188,9 +132,7 @@ const AudioFetchPage = () => {
             )}
           </div>
 
-          {/* Right Column - Record and Playback */}
           <div className="w-3/4 flex flex-col gap-8 bg-neutral-800 rounded-lg p-6 border border-neutral-700">
-            {/* Audio Recording Area - Moved Here */}
             <div className="p-4 border border-neutral-700 rounded-lg bg-neutral-850">
               <h2 className="text-xl font-semibold mb-4">Record Audio</h2>
               <div className="flex flex-col items-center gap-4">
@@ -219,7 +161,6 @@ const AudioFetchPage = () => {
               </div>
             </div>
 
-            {/* Waveform Player Area */}
             {currentAudioSource ? (
               <div className="flex-grow p-4 border border-neutral-700 rounded-lg bg-neutral-850 flex flex-col">
                 <h2 className="text-xl font-semibold mb-4 flex-shrink-0">Playback</h2>
@@ -235,10 +176,8 @@ const AudioFetchPage = () => {
           </div>
         </div>
 
-        {/* Bottom Section: Full-width Tabs */}
         <div className="flex-grow border border-neutral-700 rounded-lg bg-neutral-850 p-4 flex flex-col min-h-[300px]">
           <h2 className="text-xl font-semibold mb-4">Analysis Results</h2>
-          {/* Tab Navigation */}
           <div className="flex border-b border-neutral-600 mb-4 overflow-x-auto">
             {analysisTabs.map((tab) => (
               <button
@@ -254,7 +193,6 @@ const AudioFetchPage = () => {
               </button>
             ))}
           </div>
-          {/* Tab Content Area */}
           <div className="flex-grow relative overflow-hidden">
             {analysisTabs.map((tab) => (
               <div
@@ -272,9 +210,8 @@ const AudioFetchPage = () => {
             ))}
           </div>
         </div>
-
       </div>
-    </div>
+    </>
   );
 };
 
