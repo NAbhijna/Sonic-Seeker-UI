@@ -1,86 +1,69 @@
 "use client";
-import React, { useState, useRef } from 'react';
-import { Navbar, NavBody, NavItems, NavbarLogo, NavbarButton, MobileNav, MobileNavHeader, MobileNavToggle, MobileNavMenu } from "@/components/ui/navbar";
-import { usePathname } from 'next/navigation';
-import { useScroll, useMotionValueEvent } from "framer-motion";
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
+import React, { useState, useEffect } from "react";
+import {
+  Navbar,
+  NavBody,
+  NavItems,
+  NavbarLogo,
+  NavbarButton,
+  MobileNav,
+  MobileNavHeader,
+  MobileNavMenu,
+  MobileNavToggle,
+} from "@/components/ui/navbar";
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const [visible, setVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  const ref = useRef<HTMLDivElement>(null);
 
-  const { scrollY } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const [visible, setVisible] = useState<boolean>(false);
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 100) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.pageYOffset;
+      setVisible(currentScrollPos > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navItems = [
     { name: "Features", link: "/#features" },
-    { name: "About Us", link: "/#about" },
+    { name: "About", link: "/#about" },
+    { name: "Analyse", link: "/audio-fetch" },
   ];
-  const isHomePage = pathname === '/';
 
   return (
-    <div ref={ref} className="flex flex-col min-h-screen bg-neutral-900 text-white">
-      <Navbar className="sticky top-0 w-full z-50 bg-transparent" visible={visible}>
-        <NavBody visible={visible} className="bg-neutral-950 bg-opacity-80 backdrop-blur-sm">
+    <div className="min-h-screen flex flex-col bg-neutral-950 text-white">
+      {/* Navbar */}
+      <Navbar visible={visible}>
+        <NavBody visible={visible}>
           <NavbarLogo />
-          <NavItems items={navItems} onItemClick={() => setIsOpen(false)} />
-          {isHomePage ? (
-             <NavbarButton href="/login" className="ml-auto">
-               Login
-             </NavbarButton>
-          ) : (
-             <NavbarButton
-               href="/profile"
-               className="ml-auto"
-               variant="secondary"
-             >
-               Profile
-             </NavbarButton>
-          )}
+          <NavItems items={navItems} />
+          <NavbarButton href="/audio-fetch" variant="gradient">
+            Try Now
+          </NavbarButton>
         </NavBody>
-
         <MobileNav visible={visible}>
-          <MobileNavHeader className="bg-neutral-950 border-b border-neutral-800">
+          <MobileNavHeader>
             <NavbarLogo />
             <MobileNavToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
           </MobileNavHeader>
-          <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)} className="bg-neutral-950">
-            {navItems.map((item) => (
-              <a key={item.link} href={item.link} onClick={() => setIsOpen(false)} className="block py-2 text-white">
-                {item.name}
-              </a>
-            ))}
-            {isHomePage ? (
-              <NavbarButton href="/login" variant="primary" className="w-full mt-4">
-                Login
-              </NavbarButton>
-            ) : (
-              <NavbarButton href="/profile" variant="secondary" className="w-full mt-4">
-                Profile
-              </NavbarButton>
-            )}
+          <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)}>
+            <NavItems items={navItems} onItemClick={() => setIsOpen(false)} className="!relative !flex !flex-col !items-start !space-x-0 !space-y-4" />
+            <NavbarButton href="/audio-fetch" variant="gradient" className="w-full mt-4">
+              Try Now
+            </NavbarButton>
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
 
+      {/* Main Content */}
       <main className="flex-grow">
         {children}
       </main>
+
+      {/* Optional Footer */}
+      {/* <footer className="p-4 text-center text-neutral-500">Footer Content</footer> */}
     </div>
   );
 };

@@ -197,7 +197,7 @@ const AudioFetchPage = () => {
             {analysisTabs.map((tab) => (
               <div
                 key={tab.id}
-                className={`absolute inset-0 p-4 transition-opacity duration-300 ease-in-out rounded-lg border border-white/20 bg-white/10 backdrop-blur-md ${
+                className={`absolute inset-0 p-6 rounded-lg transition-opacity duration-300 ease-in-out bg-neutral-900/80 backdrop-blur-sm border border-neutral-700 shadow-lg shadow-purple-500/30 ${
                   activeTab === tab.id
                     ? 'opacity-100 z-10 pointer-events-auto'
                     : 'opacity-0 z-0 pointer-events-none'

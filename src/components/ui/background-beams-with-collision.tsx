@@ -1,6 +1,5 @@
 "use client";
-// This import relies on the tsconfig.json paths setting
-import { cn } from "@/lib/utils"; 
+import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useRef, useState, useEffect } from "react";
 
@@ -8,127 +7,34 @@ export const BackgroundBeamsWithCollision = ({
   children,
   className,
 }: {
-  children?: React.ReactNode; // Make children optional if not always used
+  children?: React.ReactNode;
   className?: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const beams = [
-    {
-      initialX: 10,
-      translateX: 10,
-      duration: 7,
-      repeatDelay: 3,
-      delay: 2,
-    },
-    {
-      initialX: 600,
-      translateX: 600,
-      duration: 3,
-      repeatDelay: 3,
-      delay: 4,
-    },
-    {
-      initialX: 100,
-      translateX: 100,
-      duration: 7,
-      repeatDelay: 7,
-      className: "h-6",
-    },
-    {
-      initialX: 400,
-      translateX: 400,
-      duration: 5,
-      repeatDelay: 14,
-      delay: 4,
-    },
-    {
-      initialX: 800,
-      translateX: 800,
-      duration: 11,
-      repeatDelay: 2,
-      className: "h-20",
-    },
-    {
-      initialX: 1000,
-      translateX: 1000,
-      duration: 4,
-      repeatDelay: 2,
-      className: "h-12",
-    },
-    {
-      initialX: 1200,
-      translateX: 1200,
-      duration: 6,
-      repeatDelay: 4,
-      delay: 2,
-      className: "h-6",
-    },
-    // Additional beams
-    {
-      initialX: 300,
-      translateX: 300,
-      duration: 8,
-      repeatDelay: 5,
-      delay: 1,
-      className: "h-10",
-    },
-    {
-      initialX: 700,
-      translateX: 700,
-      duration: 9,
-      repeatDelay: 4,
-      delay: 3,
-      className: "h-16",
-    },
-    {
-      initialX: 200,
-      translateX: 200,
-      duration: 6,
-      repeatDelay: 8,
-      delay: 2.5,
-      className: "h-8",
-    },
-    {
-      initialX: 900,
-      translateX: 900,
-      duration: 10,
-      repeatDelay: 6,
-      delay: 1.5,
-      className: "h-14",
-    },
-    {
-      initialX: 500,
-      translateX: 500,
-      duration: 4.5,
-      repeatDelay: 3.5,
-      delay: 3.2,
-      className: "h-18",
-    },
-    {
-      initialX: 1100,
-      translateX: 1100,
-      duration: 7.2,
-      repeatDelay: 4.8,
-      delay: 0.8,
-      className: "h-5",
-    },
-    {
-      initialX: 1300,
-      translateX: 1300,
-      duration: 5.5,
-      repeatDelay: 3.3,
-      delay: 2.2,
-      className: "h-9",
-    },
+    { initialX: 10, translateX: 10, duration: 7, repeatDelay: 3, delay: 2 },
+    { initialX: 600, translateX: 600, duration: 3, repeatDelay: 3, delay: 4 },
+    { initialX: 100, translateX: 100, duration: 7, repeatDelay: 7, className: "h-6" },
+    { initialX: 400, translateX: 400, duration: 5, repeatDelay: 14, delay: 4 },
+    { initialX: 800, translateX: 800, duration: 11, repeatDelay: 2, className: "h-20" },
+    { initialX: 1000, translateX: 1000, duration: 4, repeatDelay: 2, className: "h-12" },
+    { initialX: 1200, translateX: 1200, duration: 6, repeatDelay: 4, delay: 2, className: "h-6" },
+    { initialX: 300, translateX: 300, duration: 8, repeatDelay: 5, delay: 1, className: "h-10" },
+    { initialX: 700, translateX: 700, duration: 9, repeatDelay: 4, delay: 3, className: "h-16" },
+    { initialX: 200, translateX: 200, duration: 6, repeatDelay: 8, delay: 2.5, className: "h-8" },
+    { initialX: 900, translateX: 900, duration: 10, repeatDelay: 6, delay: 1.5, className: "h-14" },
+    { initialX: 500, translateX: 500, duration: 4.5, repeatDelay: 3.5, delay: 3.2, className: "h-18" },
+    { initialX: 1100, translateX: 1100, duration: 7.2, repeatDelay: 4.8, delay: 0.8, className: "h-5" },
+    { initialX: 1300, translateX: 1300, duration: 5.5, repeatDelay: 3.3, delay: 2.2, className: "h-9" },
   ];
 
   return (
     <div
       ref={parentRef}
       className={cn(
-        "relative flex items-center w-full justify-center overflow-hidden", 
+        "relative flex items-center w-full justify-center overflow-hidden",
         className
       )}
     >
@@ -142,7 +48,7 @@ export const BackgroundBeamsWithCollision = ({
       ))}
 
       {children}
-      
+
       <div
         ref={containerRef}
         className="absolute bottom-0 bg-neutral-100 w-full inset-x-0 pointer-events-none"
@@ -258,7 +164,7 @@ const CollisionMechanism = React.forwardRef<
           repeatDelay: beamOptions.repeatDelay || 0,
         }}
         className={cn(
-          "absolute left-0 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent", 
+          "absolute left-0 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent",
           beamOptions.className
         )}
       />

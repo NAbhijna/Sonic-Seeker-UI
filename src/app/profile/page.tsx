@@ -1,34 +1,55 @@
 "use client";
-import React from 'react'; // Removed useState
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import tempImage from './temp/temp.png';
-import { FaFileAudio, FaFileVideo } from 'react-icons/fa';
+import { FaFileAudio, FaFileVideo, FaTimes } from 'react-icons/fa';
+import WaveformPlayer from '@/components/ui/waveform-player'; // Import WaveformPlayer
 
-// Define structure for history items
+// Update structure for history items
 interface HistoryItem {
   id: string;
   name: string;
   type: 'audio' | 'video';
-  thumbnailUrl?: string; // Optional: For video thumbnails
-  date: string; // Example date
+  thumbnailUrl?: string;
+  sourceUrl?: string; // Add source URL for playback
+  date: string;
+  dummyTranscription: string;
 }
 
 const ProfilePage = () => {
-  // Placeholder data - replace with actual user data fetching logic
+  // State for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<HistoryItem | null>(null);
+
+  // Placeholder data
   const username = "ExampleUser";
   const email = "user@example.com";
 
-  // Dummy User History Data (using names from temp folder)
+  // Dummy User History Data with corrected source URLs
   const userHistory: HistoryItem[] = [
-    { id: '1', name: 'audio1.mp3', type: 'audio', date: '2024-07-28' },
-    { id: '2', name: 'video1.mp4', type: 'video', thumbnailUrl: '/path/to/video1-thumb.jpg', date: '2024-07-27' },
-    { id: '3', name: 'audio2.wav', type: 'audio', date: '2024-07-26' },
-    { id: '4', name: 'video2.webm', type: 'video', thumbnailUrl: '/path/to/video2-thumb.jpg', date: '2024-07-25' },
+    // Corrected path to point to the public directory
+    { id: '1', name: 'audio1.mp3', type: 'audio', date: '2024-07-28', sourceUrl: '/audio/abhijna.wav', dummyTranscription: 'This is a dummy transcription for audio1.mp3. It contains some sample text.' },
+    { id: '2', name: 'video1.mp4', type: 'video', thumbnailUrl: '/path/to/video1-thumb.jpg', date: '2024-07-27', dummyTranscription: 'Dummy transcription for video1.mp4. This video talks about technology trends.' },
+    // Assuming dummy_audio2.wav is also moved to public/audio
+    { id: '3', name: 'audio2.wav', type: 'audio', date: '2024-07-26', sourceUrl: '/audio/dummy_audio2.wav', dummyTranscription: 'Transcription for audio2.wav. Discusses project updates and next steps.' },
+    { id: '4', name: 'video2.webm', type: 'video', thumbnailUrl: '/path/to/video2-thumb.jpg', date: '2024-07-25', dummyTranscription: 'Video2.webm transcription: A tutorial on using the new software features.' },
   ];
 
+  // Function to handle opening the modal
+  const handleItemClick = (item: HistoryItem) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  // Function to handle closing the modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
+
   return (
-    <div className="flex flex-grow p-4 gap-4">
+    <div className="flex flex-grow p-4 gap-4 relative">
       {/* Left Column (Inline Sidebar) */}
       <div className="w-64 flex-shrink-0 bg-neutral-800 rounded-lg p-4 flex flex-col items-center">
         {/* Avatar */}
@@ -76,20 +97,22 @@ const ProfilePage = () => {
           <ul className="space-y-4">
             {userHistory.length > 0 ? (
               userHistory.map((item) => (
-                <li key={item.id} className="flex items-center gap-4 p-3 bg-neutral-700/50 rounded-md hover:bg-neutral-700 transition-colors">
+                <li
+                  key={item.id}
+                  onClick={() => handleItemClick(item)}
+                  className="flex items-center gap-4 p-3 bg-neutral-700/50 rounded-md hover:bg-neutral-700 transition-colors cursor-pointer"
+                >
                   {item.type === 'video' ? (
-                    // Use Image component for video thumbnail placeholder
                     <div className="w-16 h-10 rounded flex-shrink-0 overflow-hidden">
                       <Image
-                        src={tempImage} // Use the imported temp image
+                        src={tempImage}
                         alt={`${item.name} thumbnail`}
-                        width={64} // Corresponds to w-16
-                        height={40} // Corresponds to h-10
+                        width={64}
+                        height={40}
                         className="object-cover w-full h-full"
                       />
                     </div>
                   ) : (
-                    // Keep icon for audio
                     <div className="w-16 h-10 flex items-center justify-center flex-shrink-0">
                       <FaFileAudio className="text-neutral-400 text-3xl" />
                     </div>
@@ -106,6 +129,58 @@ const ProfilePage = () => {
           </ul>
         </div>
       </div>
+
+      {/* Modal for Transcription and Playback */}
+      {isModalOpen && selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-800 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-4 border-b border-neutral-700">
+              <h3 className="text-lg font-semibold truncate" title={selectedItem.name}>{selectedItem.name}</h3>
+              <button onClick={closeModal} className="text-neutral-400 hover:text-white">
+                <FaTimes size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 flex flex-col min-h-0"> {/* Ensure flex-col and min-h-0 for flex-grow */}
+              {/* Conditionally render WaveformPlayer for audio files with updated structure */}
+              {selectedItem.type === 'audio' && selectedItem.sourceUrl && (
+                // Apply container styling similar to audio-fetch page
+                <div className="flex-grow p-4 border border-neutral-700 rounded-lg bg-neutral-850 flex flex-col min-h-[200px]"> {/* Added min-height */}
+                  <h2 className="text-xl font-semibold mb-4 flex-shrink-0 text-neutral-300">Playback</h2> {/* Changed h4 to h2 and updated style */}
+                  <div className="flex-grow min-h-0"> {/* Ensure inner div allows growth */}
+                    {/* Remove specific options to use defaults */}
+                    <WaveformPlayer
+                      audioSource={selectedItem.sourceUrl}
+                      // options prop removed to use defaults like audio-fetch page
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Transcription */}
+              {/* Ensure transcription section doesn't prevent player growth if needed */}
+              <div className="flex-shrink-0"> {/* Prevent transcription from growing excessively if player is present */}
+                <h4 className="text-md font-medium mb-2 text-neutral-300">Transcription:</h4>
+                <p className="text-neutral-200 whitespace-pre-wrap">
+                  {selectedItem.dummyTranscription}
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-neutral-700 text-right">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
